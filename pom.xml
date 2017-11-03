@@ -3,18 +3,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
+	<groupId>liberty.maven</groupId>
+    <artifactId>sample.spring</artifactId>
+    <version>1</version>
+    <packaging>war</packaging>
+
+    <parent>
         <groupId>net.wasdev.wlp.maven.parent</groupId>
         <artifactId>liberty-maven-app-parent</artifactId>
         <version>2.0</version>
-	</parent>
-    
-	<groupId>liberty.maven</groupId>
-	<artifactId>sample.spring</artifactId>
-	<version>1</version>
-	<packaging>war</packaging>
-	
-	<licenses>
+    </parent>
+
+    <licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
 			<url>https://raw.github.com/WASdev/tool.accelerate.core/master/LICENSE</url>
@@ -33,7 +33,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-
+        <maven.version>3.5.0</maven.version>
+        <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
+        <plexus-build-api.version>0.0.7</plexus-build-api.version>
 
 		<!-- Liberty server properties -->
 		<testServerHttpPort>9080</testServerHttpPort>
@@ -152,7 +154,45 @@
     		<artifactId>spring-beans</artifactId>
     		<version>3.2.1.RELEASE</version>
 		</dependency>
-	</dependencies>
+
+        <!-- these were added for debugging -->
+		<dependency>
+			<groupId>net.wasdev.wlp.maven.plugins</groupId>
+			<artifactId>liberty-maven-plugin</artifactId>
+			<version>2.1</version>
+		</dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${maven-plugin-annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+            <version>${plexus-build-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -178,6 +218,10 @@
 						<version>17.0.0.1</version>
 						<type>zip</type>
 					</assemblyArtifact>
+                    <!-- instead of putting liberty in target dir -->
+                    <assemblyInstallDirectory>${project.basedir}/../liberty</assemblyInstallDirectory>
+                    <!-- do not download and install liberty if already there -->
+                    <isInstall>false</isInstall>
 					<configFile>src/main/liberty/config/server.xml</configFile>
 					<packageFile>${package.file}</packageFile>
 					<include>${packaging.type}</include>
